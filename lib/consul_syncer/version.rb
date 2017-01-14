@@ -1,3 +1,3 @@
-module ConsulSyncer
+class ConsulSyncer
   VERSION = "0.0.0"
 end

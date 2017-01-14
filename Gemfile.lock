@@ -2,27 +2,34 @@ PATH
   remote: .
   specs:
     consul_syncer (0.0.0)
+      faraday
 
 GEM
   remote: https://rubygems.org/
   specs:
+    addressable (2.5.0)
+      public_suffix (~> 2.0, >= 2.0.2)
     bump (0.5.3)
-    diff-lcs (1.2.5)
+    crack (0.4.3)
+      safe_yaml (~> 1.0.0)
+    faraday (0.11.0)
+      multipart-post (>= 1.2, < 3)
+    hashdiff (0.3.2)
+    maxitest (2.4.0)
+      minitest (>= 5.0.0, < 5.11.0)
+    metaclass (0.0.4)
+    minitest (5.10.1)
+    mocha (1.2.1)
+      metaclass (~> 0.0.1)
+    multipart-post (2.0.0)
+    public_suffix (2.0.5)
     rake (12.0.0)
-    rspec (3.5.0)
-      rspec-core (~> 3.5.0)
-      rspec-expectations (~> 3.5.0)
-      rspec-mocks (~> 3.5.0)
-    rspec-core (3.5.4)
-      rspec-support (~> 3.5.0)
-    rspec-expectations (3.5.0)
-      diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.5.0)
-    rspec-mocks (3.5.0)
-      diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.5.0)
-    rspec-support (3.5.0)
+    safe_yaml (1.0.4)
     single_cov (0.5.9)
+    webmock (2.3.2)
+      addressable (>= 2.3.6)
+      crack (>= 0.3.2)
+      hashdiff
 
 PLATFORMS
   ruby
@@ -30,9 +37,8 @@ PLATFORMS
 DEPENDENCIES
   bump
   consul_syncer!
+  maxitest
+  mocha
   rake
-  rspec
   single_cov
-
-BUNDLED WITH
-   1.13.6
+  webmock

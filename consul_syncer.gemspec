@@ -9,4 +9,5 @@ Gem::Specification.new name, ConsulSyncer::VERSION do |s|
   s.files = `git ls-files lib/ bin/ MIT-LICENSE`.split("\n")
   s.license = "MIT"
   s.required_ruby_version = '>= 2.0.0'
+  s.add_runtime_dependency 'faraday'
 end
