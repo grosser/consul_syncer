@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    consul_syncer (0.1.1)
+    consul_syncer (0.2.0)
       faraday
 
 GEM
@@ -42,3 +42,6 @@ DEPENDENCIES
   rake
   single_cov
   webmock
+
+BUNDLED WITH
+   1.13.6
