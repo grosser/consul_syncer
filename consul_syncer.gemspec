@@ -1,5 +1,6 @@
 name = "consul_syncer"
-require "./lib/#{name.gsub("-","/")}/version"
+$LOAD_PATH << File.expand_path('../lib', __FILE__)
+require "#{name}/version"
 
 Gem::Specification.new name, ConsulSyncer::VERSION do |s|
   s.summary = "Sync remote services into consul"

@@ -23,14 +23,20 @@ describe ConsulSyncer::Endpoint do
   end
 
   describe "#tags" do
-    it "is the ServiceTags" do
+    it "is the Service Tags" do
       ConsulSyncer::Endpoint.new('Service' => {'Tags' => ['x']}).tags.must_equal ['x']
     end
   end
 
   describe "#service_id" do
-    it 'is ServiceId' do
+    it 'is Service Id' do
       ConsulSyncer::Endpoint.new('Service' => {'ID' => 'x'}).service_id.must_equal 'x'
+    end
+  end
+
+  describe "#service_address" do
+    it 'is Service Address' do
+      ConsulSyncer::Endpoint.new('Service' => {'Address' => 'x'}).service_address.must_equal 'x'
     end
   end
 

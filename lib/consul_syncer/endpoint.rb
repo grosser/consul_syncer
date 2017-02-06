@@ -13,6 +13,10 @@ class ConsulSyncer
       @hash.fetch('Service').fetch('ID')
     end
 
+    def service_address
+      @hash.fetch('Service').fetch('Address')
+    end
+
     def node
       @hash.fetch('Node').fetch('Node')
     end
