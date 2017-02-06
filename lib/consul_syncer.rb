@@ -34,13 +34,14 @@ class ConsulSyncer
         address: consul_endpoint.ip,
         service: consul_endpoint.name,
         service_id: consul_endpoint.service_id,
+        service_address: consul_endpoint.service_address,
         tags: consul_endpoint.tags.sort,
         port: consul_endpoint.port
       }
     end
 
     identifying = [:node, :service_id]
-    interesting = [*identifying, :service, :address, :tags, :port]
+    interesting = [*identifying, :service, :service_address, :address, :tags, :port]
 
     expected_definitions.each do |expected|
       description = "#{expected.fetch(:service)} / #{expected.fetch(:service_id)} on #{expected.fetch(:node)} in Consul"
@@ -93,7 +94,7 @@ class ConsulSyncer
   end
 
   # creates or updates based on node and service
-  def register(node:, service:, service_id:, address:, tags:, port:)
+  def register(node:, service:, service_id:, service_address:, address:, tags:, port:)
     @consul.request(
       :put,
       '/v1/catalog/register',
@@ -102,6 +103,7 @@ class ConsulSyncer
       Service: {
         ID: service_id,
         Service: service,
+        Address: service_address,
         Tags: tags,
         Port: port
       }

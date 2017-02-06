@@ -28,6 +28,7 @@ describe ConsulSyncer do
         },
         Service: {
           ID: "fooid",
+          Address: "10.0.2.2",
           Service: "foo",
           Tags: tags.dup,
           Port: 5080
@@ -40,6 +41,7 @@ describe ConsulSyncer do
         address: '10.0.1.1',
         service: 'foo',
         service_id: 'fooid',
+        service_address: '10.0.2.2',
         tags: tags.last(1),
         port: 5080
       }
@@ -58,7 +60,7 @@ describe ConsulSyncer do
 
     it "adds a missing service" do
       stub_request(:put, "http://localhost:123/v1/catalog/register").
-        with(body: {"{\"Node\":\"foo.test.com\",\"Address\":\"1.2.3.4\",\"Service\":{\"ID\":\"fooid\",\"Service\":\"foo\",\"Tags\":\"bar\",\"baz\",\"Port\":5080}}"=>nil})
+        with(body: {"{\"Node\":\"foo.test.com\",\"Address\":\"1.2.3.4\",\"Service\":{\"ID\":\"fooid\",\"Service\":\"foo\",\"Address\":\"10.0.2.2\",\"Tags\":\"bar\",\"baz\",\"Port\":5080}}"=>nil})
 
       other = definition.dup
       other[:address] = '1.2.3.4'
@@ -73,7 +75,7 @@ describe ConsulSyncer do
 
     it "updates modified service" do
       stub_request(:put, "http://localhost:123/v1/catalog/register").
-        with(body: {"{\"Node\":\"foo.test.com\",\"Address\":\"10.0.1.1\",\"Service\":{\"ID\":\"fooid\",\"Service\":\"foo\",\"Tags\":\"bar\",\"baz\",\"Port\":5081}}"=>nil})
+        with(body: {"{\"Node\":\"foo.test.com\",\"Address\":\"10.0.1.1\",\"Service\":{\"ID\":\"fooid\",\"Service\":\"foo\",\"Address\":\"10.0.2.2\",\"Tags\":\"bar\",\"baz\",\"Port\":5081}}"=>nil})
       definition[:port] += 1
       syncer.sync [definition], tags.first(1)
     end
