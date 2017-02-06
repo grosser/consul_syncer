@@ -18,7 +18,7 @@ Usage
 syncer = ConsulSyncer.new('http://localhost:8500', logger: Logger.new(STDOUT))
 syncer.sync(
   [
-    {node: 'N', address: 'A', service: 'S', service_id: 'ID', port: 123, tags: ['abc']},
+    {node: 'N', address: 'A', service: 'S', service_id: 'ID', service_address: 'A', port: 123, tags: ['abc']},
     # ...
   ], 
   ['managed-by-consul-syncer']
