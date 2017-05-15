@@ -47,7 +47,7 @@ class ConsulSyncer
       description = "#{expected.fetch(:service)} / #{expected.fetch(:service_id)} on #{expected.fetch(:node)} in Consul"
 
       if remove_matching_service!(actual_definitions, expected, interesting)
-        @logger.info "Found #{description}"
+        @logger.debug "Found #{description}"
       elsif remove_matching_service!(actual_definitions, expected, identifying)
         @logger.info "Updating #{description}"
         modified += 1
@@ -77,7 +77,7 @@ class ConsulSyncer
       # cannot query for multiple tags via query, so handle multi-matching manually
       next if (requested_tags - tags).any?
 
-      @logger.info "Getting service endpoints for #{name}"
+      @logger.debug "Getting service endpoints for #{name}"
       # this also finds the 'external services' we define since they have no checks
       endpoints = @consul.request(:get, "/v1/health/service/#{name}")
       endpoints.each do |endpoint|
