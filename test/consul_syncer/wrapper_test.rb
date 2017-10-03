@@ -4,7 +4,8 @@ require_relative '../test_helper'
 SingleCov.covered!
 
 describe ConsulSyncer::Wrapper do
-  let(:consul) { ConsulSyncer::Wrapper.new(Faraday.new("http://consul:123")) }
+  let(:params) { {} }
+  let(:consul) { ConsulSyncer::Wrapper.new(Faraday.new("http://consul:123"), params: params) }
 
   describe "#request" do
     it "returns object on successful get" do
@@ -36,6 +37,18 @@ describe ConsulSyncer::Wrapper do
     it "returns true for successful put" do
       stub_request(:put, "http://consul:123/v1/foo/bar").to_return(body: 'true')
       consul.request(:put, '/v1/foo/bar', foo: :bar).must_equal true
+    end
+
+    it "adds standalone params" do
+      params[:x] = 1
+      stub_request(:get, "http://consul:123/v1/foo/bar?x=1").to_return(body: '{}')
+      consul.request(:get, '/v1/foo/bar').must_equal({})
+    end
+
+    it "appends params" do
+      params[:x] = 1
+      stub_request(:get, "http://consul:123/v1/foo/bar?y=1&x=1").to_return(body: '{}')
+      consul.request(:get, '/v1/foo/bar?y=1').must_equal({})
     end
   end
 end

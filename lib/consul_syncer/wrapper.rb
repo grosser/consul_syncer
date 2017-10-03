@@ -8,14 +8,20 @@ class ConsulSyncer
     class ConsulError < StandardError
     end
 
-    def initialize(consul)
+    def initialize(consul, params:)
       @consul = consul
+      @params = params
     end
 
     def request(method, path, payload = nil)
+      if @params.any?
+        separator = (path.include?("?") ? "&" : "?")
+        path += "#{separator}#{URI.encode_www_form(@params)}"
+      end
+      args = [path]
+      args << payload.to_json if payload
+
       retry_on_error do
-        args = [path]
-        args << payload.to_json if payload
         response = @consul.send(method, *args)
         if response.status == 200
           if method == :get

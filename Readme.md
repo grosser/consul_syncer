@@ -25,6 +25,13 @@ syncer.sync(
 )  
 ```
 
+To identify the origin of consul requests or send other information along, use `params`.
+They will get logged in consuls log `consul monitor --log-level=debug` and will tell others who made updates.
+
+```Ruby
+ConsulSyncer.new('http://localhost:8500', logger: Logger.new(STDOUT), params: {host: Socket.gethostname, app: 'consul-filler'})
+```
+
 Author
 ======
 [Michael Grosser](http://grosser.it)<br/>

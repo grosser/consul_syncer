@@ -5,6 +5,18 @@ SingleCov.covered!
 
 describe ConsulSyncer do
   let(:syncer) { ConsulSyncer.new("http://localhost:123", logger: Logger.new("/dev/null")) }
+  let(:tags) { ["bar", "baz"] }
+  let(:definition) do
+    {
+      node: 'foo.test.com',
+      address: '10.0.1.1',
+      service: 'foo',
+      service_id: 'fooid',
+      service_address: '10.0.2.2',
+      tags: tags.last(1),
+      port: 5080
+    }
+  end
 
   it "complains when not passing any tags" do
     assert_raises ArgumentError do
@@ -19,7 +31,6 @@ describe ConsulSyncer do
   end
 
   describe "with services running" do
-    let(:tags) { ["bar", "baz"] }
     let(:node) do
       {
         Node: {
@@ -35,17 +46,7 @@ describe ConsulSyncer do
         }
       }
     end
-    let(:definition) do
-      {
-        node: 'foo.test.com',
-        address: '10.0.1.1',
-        service: 'foo',
-        service_id: 'fooid',
-        service_address: '10.0.2.2',
-        tags: tags.last(1),
-        port: 5080
-      }
-    end
+
 
     before do
       stub_request(:get, "http://localhost:123/v1/catalog/services?tag=bar").
@@ -78,6 +79,16 @@ describe ConsulSyncer do
         with(body: {"{\"Node\":\"foo.test.com\",\"Address\":\"10.0.1.1\",\"Service\":{\"ID\":\"fooid\",\"Service\":\"foo\",\"Address\":\"10.0.2.2\",\"Tags\":\"bar\",\"baz\",\"Port\":5081}}"=>nil})
       definition[:port] += 1
       syncer.sync [definition], tags.first(1)
+    end
+  end
+
+  describe "with extra_params" do
+    let(:syncer) { ConsulSyncer.new("http://localhost:123", logger: Logger.new("/dev/null"), params: {from_host: 'xyz', foo: 'bar'}) }
+
+    it "sends params during requests" do
+      stub_request(:get, "http://localhost:123/v1/catalog/services?foo=bar&from_host=xyz&tag=some-tag").to_return(body: "[]")
+      stub_request(:put, "http://localhost:123/v1/catalog/register?foo=bar&from_host=xyz")
+      syncer.sync [definition], ["some-tag"]
     end
   end
 end

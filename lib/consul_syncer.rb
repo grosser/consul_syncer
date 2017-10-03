@@ -9,8 +9,8 @@ require 'consul_syncer/wrapper'
 # - updates changed
 # - removes deprecated
 class ConsulSyncer
-  def initialize(url, logger: Logger.new(STDOUT))
-    @consul = Wrapper.new(Faraday.new(url))
+  def initialize(url, logger: Logger.new(STDOUT), params: {})
+    @consul = Wrapper.new(Faraday.new(url), params: params)
     @logger = logger
   end
 
