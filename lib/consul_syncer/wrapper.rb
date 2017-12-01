@@ -8,9 +8,10 @@ class ConsulSyncer
     class ConsulError < StandardError
     end
 
-    def initialize(consul, params:)
+    def initialize(consul, params:, logger:)
       @consul = consul
       @params = params
+      @logger = logger
     end
 
     def request(method, path, payload = nil)
@@ -48,7 +49,7 @@ class ConsulSyncer
       raise unless backoff
       retried += 1
 
-      warn "Consul request failed, retrying in #{backoff}s"
+      @logger.warn "Consul request failed, retrying in #{backoff}s"
       sleep backoff
       retry
     end

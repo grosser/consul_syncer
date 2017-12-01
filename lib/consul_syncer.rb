@@ -10,8 +10,8 @@ require 'consul_syncer/wrapper'
 # - removes deprecated
 class ConsulSyncer
   def initialize(url, logger: Logger.new(STDOUT), params: {})
-    @consul = Wrapper.new(Faraday.new(url), params: params)
     @logger = logger
+    @consul = Wrapper.new(Faraday.new(url), params: params, logger: @logger)
   end
 
   # changing tags means all previous services need to be removed manually since
