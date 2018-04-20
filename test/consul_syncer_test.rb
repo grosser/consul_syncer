@@ -47,7 +47,6 @@ describe ConsulSyncer do
       }
     end
 
-
     before do
       stub_request(:get, "http://localhost:123/v1/catalog/services?tag=bar").
         to_return(body: {foo: tags}.to_json)
@@ -72,6 +71,19 @@ describe ConsulSyncer do
       stub_request(:put, "http://localhost:123/v1/catalog/deregister").
         with(body: {"{\"Node\":\"foo.test.com\",\"ServiceID\":\"fooid\"}"=>nil})
       syncer.sync [], tags.first(1)
+    end
+
+    it "does not match services that fail multi-tag match" do
+      stub_request(:put, "http://localhost:123/v1/catalog/register") # not matched -> new service
+      syncer.sync [definition], tags + ["nope"]
+    end
+
+    it "does not match endpoints with missing tags" do
+      node[:Service][:Tags].pop
+      stub_request(:get, "http://localhost:123/v1/health/service/foo").
+        to_return(body: [node].to_json)
+      stub_request(:put, "http://localhost:123/v1/catalog/register") # not matched -> new service
+      syncer.sync [definition], tags
     end
 
     it "updates modified service" do
