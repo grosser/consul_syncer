@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    consul_syncer (0.5.0)
+    consul_syncer (0.6.0)
       faraday
 
 GEM
