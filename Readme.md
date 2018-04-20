@@ -25,6 +25,10 @@ syncer.sync(
 )  
 ```
 
+When fetching the service itself works, but getting additional info like tags fails `keep: true` can be added
+to the definition to make it not update/remove the service. This can be useful when tags come from the actual services metadata
+but the service is in trouble somehow.
+
 To identify the origin of consul requests or send other information along, use `params`.
 They will get logged in consuls log `consul monitor --log-level=debug` and will tell others who made updates.
 

@@ -46,7 +46,13 @@ class ConsulSyncer
     expected_definitions.each do |expected|
       description = "#{expected.fetch(:service)} / #{expected.fetch(:service_id)} on #{expected.fetch(:node)} in Consul"
 
-      if remove_matching_service!(actual_definitions, expected, interesting)
+      if expected[:keep]
+        if remove_matching_service!(actual_definitions, expected, identifying)
+          @logger.warn "Kept #{description}"
+        else
+          @logger.error "Unable to keep #{description} since it was not found"
+        end
+      elsif remove_matching_service!(actual_definitions, expected, interesting)
         @logger.debug "Found #{description}"
       elsif remove_matching_service!(actual_definitions, expected, identifying)
         @logger.info "Updating #{description}"

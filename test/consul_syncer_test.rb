@@ -58,6 +58,19 @@ describe ConsulSyncer do
       syncer.sync [definition], tags.first(1)
     end
 
+    it "does not modify services that are marked as keep when they are found" do
+      definition[:port] += 1 # would normally trigger an update
+      definition[:keep] = true
+      syncer.sync [definition], tags.first(1)
+    end
+
+    it "does not add new services when marked as keep is not found" do
+      definition[:node] += "foo" # would be a new service
+      definition[:keep] = true
+      stub_request(:put, "http://localhost:123/v1/catalog/deregister")
+      syncer.sync [definition], tags.first(1)
+    end
+
     it "adds a missing service" do
       stub_request(:put, "http://localhost:123/v1/catalog/register").
         with(body: {"{\"Node\":\"foo.test.com\",\"Address\":\"1.2.3.4\",\"Service\":{\"ID\":\"fooid\",\"Service\":\"foo\",\"Address\":\"10.0.2.2\",\"Tags\":\"bar\",\"baz\",\"Port\":5080}}"=>nil})
