@@ -44,10 +44,12 @@ class ConsulSyncer
     interesting = [*identifying, :service, :service_address, :address, :tags, :port]
 
     expected_definitions.each do |expected|
-      description = "#{expected.fetch(:service)} / #{expected.fetch(:service_id)} on #{expected.fetch(:node)} in Consul"
+      description = "#{expected[:service] || "*"} / #{expected[:service_id] || "*"} on #{expected.fetch(:node)} in Consul"
 
       if expected[:keep]
-        if remove_matching_service!(actual_definitions, expected, identifying)
+        keep_identifying = identifying.dup
+        keep_identifying.delete(:service_id) unless expected[:service_id]
+        if remove_matching_service!(actual_definitions, expected, keep_identifying)
           @logger.warn "Kept #{description}"
         else
           @logger.error "Unable to keep #{description} since it was not found"

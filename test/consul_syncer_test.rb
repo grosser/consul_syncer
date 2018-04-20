@@ -64,6 +64,13 @@ describe ConsulSyncer do
       syncer.sync [definition], tags.first(1)
     end
 
+    it "does not modify nodes that are marked as keep when they are found" do
+      definition.delete(:service_id)
+      definition.delete(:service)
+      definition[:keep] = true
+      syncer.sync [definition], tags.first(1)
+    end
+
     it "does not add new services when marked as keep is not found" do
       definition[:node] += "foo" # would be a new service
       definition[:keep] = true
