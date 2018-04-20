@@ -47,7 +47,6 @@ describe ConsulSyncer do
       }
     end
 
-
     before do
       stub_request(:get, "http://localhost:123/v1/catalog/services?tag=bar").
         to_return(body: {foo: tags}.to_json)
@@ -56,6 +55,26 @@ describe ConsulSyncer do
     end
 
     it "does nothing when in sync" do
+      syncer.sync [definition], tags.first(1)
+    end
+
+    it "does not modify services that are marked as keep when they are found" do
+      definition[:port] += 1 # would normally trigger an update
+      definition[:keep] = true
+      syncer.sync [definition], tags.first(1)
+    end
+
+    it "does not modify nodes that are marked as keep when they are found" do
+      definition.delete(:service_id)
+      definition.delete(:service)
+      definition[:keep] = true
+      syncer.sync [definition], tags.first(1)
+    end
+
+    it "does not add new services when marked as keep is not found" do
+      definition[:node] += "foo" # would be a new service
+      definition[:keep] = true
+      stub_request(:put, "http://localhost:123/v1/catalog/deregister")
       syncer.sync [definition], tags.first(1)
     end
 
@@ -72,6 +91,19 @@ describe ConsulSyncer do
       stub_request(:put, "http://localhost:123/v1/catalog/deregister").
         with(body: {"{\"Node\":\"foo.test.com\",\"ServiceID\":\"fooid\"}"=>nil})
       syncer.sync [], tags.first(1)
+    end
+
+    it "does not match services that fail multi-tag match" do
+      stub_request(:put, "http://localhost:123/v1/catalog/register") # not matched -> new service
+      syncer.sync [definition], tags + ["nope"]
+    end
+
+    it "does not match endpoints with missing tags" do
+      node[:Service][:Tags].pop
+      stub_request(:get, "http://localhost:123/v1/health/service/foo").
+        to_return(body: [node].to_json)
+      stub_request(:put, "http://localhost:123/v1/catalog/register") # not matched -> new service
+      syncer.sync [definition], tags
     end
 
     it "updates modified service" do
