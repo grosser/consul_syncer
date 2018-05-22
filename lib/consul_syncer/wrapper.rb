@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 # - parses json responses
 # - fails with descriptive output when a request fails
+
+require 'json'
+
 class ConsulSyncer
   class Wrapper
     BACKOFF = [0.1, 0.5, 1.0, 2.0].freeze
