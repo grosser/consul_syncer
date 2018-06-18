@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    consul_syncer (0.6.1)
+    consul_syncer (0.7.0)
       faraday
 
 GEM
@@ -12,7 +12,7 @@ GEM
     bump (0.6.0)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
-    faraday (0.15.1)
+    faraday (0.15.2)
       multipart-post (>= 1.2, < 3)
     hashdiff (0.3.7)
     maxitest (2.8.0)
