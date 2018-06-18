@@ -15,7 +15,9 @@ Usage
 =====
 
 ```Ruby
-syncer = ConsulSyncer.new('http://localhost:8500', logger: Logger.new(STDOUT))
+# address = ENV.fetch("CONSUL_HTTP_ADDR") # prefer using standard consul env var
+address = 'http://localhost:8500'
+syncer = ConsulSyncer.new(address, logger: Logger.new(STDOUT))
 syncer.sync(
   [
     {node: 'N', address: 'A', service: 'S', service_id: 'ID', service_address: 'A', port: 123, tags: ['abc']},

@@ -5,13 +5,14 @@ require 'consul_syncer/endpoint'
 require 'consul_syncer/wrapper'
 
 # syncs a given list of endpoints into consul
+# - sorts tags
 # - adds missing
 # - updates changed
 # - removes deprecated
 class ConsulSyncer
   def initialize(url, logger: Logger.new(STDOUT), params: {})
     @logger = logger
-    @consul = Wrapper.new(Faraday.new(url), params: params, logger: @logger)
+    @consul = Wrapper.new(url, params: params, logger: @logger)
   end
 
   # changing tags means all previous services need to be removed manually since

@@ -11,8 +11,9 @@ class ConsulSyncer
     class ConsulError < StandardError
     end
 
-    def initialize(consul, params:, logger:)
-      @consul = consul
+    def initialize(consul_url, params:, logger:)
+      consul_url = "http://#{consul_url}" unless consul_url.include?("://")
+      @consul = Faraday.new(consul_url)
       @params = params
       @logger = logger
     end

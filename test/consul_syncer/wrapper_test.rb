@@ -6,7 +6,7 @@ SingleCov.covered!
 describe ConsulSyncer::Wrapper do
   let(:params) { {} }
   let(:logger) { Logger.new(STDOUT) }
-  let(:consul) { ConsulSyncer::Wrapper.new(Faraday.new("http://consul:123"), params: params, logger: logger) }
+  let(:consul) { ConsulSyncer::Wrapper.new("http://consul:123", params: params, logger: logger) }
 
   describe "#request" do
     it "returns object on successful get" do
@@ -50,6 +50,12 @@ describe ConsulSyncer::Wrapper do
       params[:x] = 1
       stub_request(:get, "http://consul:123/v1/foo/bar?y=1&x=1").to_return(body: '{}')
       consul.request(:get, '/v1/foo/bar?y=1').must_equal({})
+    end
+
+    it "works with non-http address like CONSUL_HTTP_ADDR" do
+      consul = ConsulSyncer::Wrapper.new("consul:123", params: params, logger: logger)
+      stub_request(:get, "http://consul:123/v1/foo/bar").to_return(body: '{"foo": "bar"}')
+      consul.request(:get, '/v1/foo/bar').must_equal('foo' => 'bar')
     end
   end
 end
