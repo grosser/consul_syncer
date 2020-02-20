@@ -8,4 +8,4 @@ require "consul_syncer"
 
 require "maxitest/autorun"
 require "webmock/minitest"
-require "mocha/mini_test"
+require "mocha/minitest"
