@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    consul_syncer (0.7.0)
+    consul_syncer (1.0.0)
       faraday
 
 GEM
@@ -12,7 +12,7 @@ GEM
     bump (0.6.0)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
-    faraday (0.15.2)
+    faraday (1.0.0)
       multipart-post (>= 1.2, < 3)
     hashdiff (0.3.7)
     maxitest (2.8.0)
@@ -21,7 +21,7 @@ GEM
     minitest (5.11.3)
     mocha (1.5.0)
       metaclass (~> 0.0.1)
-    multipart-post (2.0.0)
+    multipart-post (2.1.1)
     public_suffix (3.0.2)
     rake (12.3.1)
     safe_yaml (1.0.4)
@@ -44,4 +44,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   1.16.1
+   1.17.2
