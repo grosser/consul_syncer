@@ -81,7 +81,7 @@ class ConsulSyncer
   private
 
   def consul_endpoints(requested_tags)
-    services = @consul.request(:get, "/v1/catalog/services?tag=#{requested_tags.first}")
+    services = @consul.request(:get, "/v1/catalog/services?cached&stale&tag=#{requested_tags.first}")
     services.each_with_object([]) do |(name, tags), all|
       # cannot query for multiple tags via query, so handle multi-matching manually
       next if (requested_tags - tags).any?
