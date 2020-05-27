@@ -60,11 +60,11 @@ class ConsulSyncer
       elsif remove_matching_service!(actual_definitions, expected, identifying)
         @logger.info "Updating #{description}"
         modified += 1
-        register expected
+        register **expected
       else
         @logger.info "Adding #{description}"
         modified += 1
-        register expected
+        register **expected
       end
     end
 
