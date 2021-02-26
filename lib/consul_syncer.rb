@@ -27,6 +27,7 @@ class ConsulSyncer
     expected_definitions.each do |d|
       d[:tags] += tags
       d[:tags].sort!
+      d[:tags].uniq!
     end
 
     actual_definitions = consul_endpoints(tags).map do |consul_endpoint|
