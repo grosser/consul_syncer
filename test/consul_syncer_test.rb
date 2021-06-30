@@ -112,6 +112,23 @@ describe ConsulSyncer do
       definition[:port] += 1
       syncer.sync [definition], tags.first(1)
     end
+
+    describe "dry" do
+      it "does not remove" do
+        other = definition.dup
+        other[:address] = '1.2.3.4'
+        syncer.sync [definition, other], tags.first(1), dry: true
+      end
+
+      it "does not add" do
+        syncer.sync [], tags.first(1), dry: true
+      end
+
+      it "does not update" do
+        definition[:port] += 1
+        syncer.sync [definition], tags.first(1), dry: true
+      end
+    end
   end
 
   describe "with extra_params" do
