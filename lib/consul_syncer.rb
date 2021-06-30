@@ -17,7 +17,7 @@ class ConsulSyncer
 
   # changing tags means all previous services need to be removed manually since
   # they can no longer be found
-  def sync(expected_definitions, tags)
+  def sync(expected_definitions, tags, dry: false)
     raise ArgumentError, "Need at least 1 tag to reliably update endpoints" if tags.empty?
 
     modified = 0
@@ -61,11 +61,11 @@ class ConsulSyncer
       elsif remove_matching_service!(actual_definitions, expected, identifying)
         @logger.info "Updating #{description}"
         modified += 1
-        register **expected
+        register **expected unless dry
       else
         @logger.info "Adding #{description}"
         modified += 1
-        register **expected
+        register **expected unless dry
       end
     end
 
@@ -73,7 +73,7 @@ class ConsulSyncer
     actual_definitions.each do |actual|
       @logger.info "Removing #{actual.fetch(:service)} / #{actual.fetch(:service_id)} on #{actual.fetch(:node)} in Consul"
       modified += 1
-      deregister actual.fetch(:node), actual.fetch(:service_id)
+      deregister actual.fetch(:node), actual.fetch(:service_id) unless dry
     end
 
     modified
