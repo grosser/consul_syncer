@@ -24,7 +24,7 @@ syncer.sync(
     # ...
   ], 
   ['managed-by-consul-syncer']
-)  
+)
 ```
 
 When fetching the service itself works, but getting additional info like tags fails `keep: true` can be added
@@ -36,6 +36,14 @@ They will get logged in consuls log `consul monitor --log-level=debug` and will 
 
 ```Ruby
 ConsulSyncer.new('http://localhost:8500', logger: Logger.new(STDOUT), params: {host: Socket.gethostname, app: 'consul-filler'})
+```
+
+Spliting planning and execution to for example add confirmation or inspect the changes.
+
+```ruby
+plan = syncer.plan(...)
+puts "Planned #{plan.size} changes"
+syncer.execute plan
 ```
 
 Author

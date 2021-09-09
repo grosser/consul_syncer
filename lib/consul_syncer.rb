@@ -18,9 +18,13 @@ class ConsulSyncer
   # changing tags means all previous services need to be removed manually since
   # they can no longer be found
   def sync(expected_definitions, tags, dry: false)
-    raise ArgumentError, "Need at least 1 tag to reliably update endpoints" if tags.empty?
+    planned = plan(expected_definitions, tags)
+    execute planned unless dry
+    planned.size # let users know what we did and keep legacy api working
+  end
 
-    modified = 0
+  def plan(expected_definitions, tags)
+    raise ArgumentError, "Need at least 1 tag to reliably update endpoints" if tags.empty?
 
     # ensure consistent tags to find the endpoints after adding
     expected_definitions = expected_definitions.dup
@@ -44,6 +48,7 @@ class ConsulSyncer
 
     identifying = [:node, :service_id]
     interesting = [*identifying, :service, :service_address, :address, :tags, :port]
+    planned = []
 
     expected_definitions.each do |expected|
       description = "#{expected[:service] || "*"} / #{expected[:service_id] || "*"} on #{expected.fetch(:node)} in Consul"
@@ -60,23 +65,30 @@ class ConsulSyncer
         @logger.debug "Found #{description}"
       elsif remove_matching_service!(actual_definitions, expected, identifying)
         @logger.info "Updating #{description}"
-        modified += 1
-        register **expected unless dry
+        planned << [:register, [], expected]
       else
         @logger.info "Adding #{description}"
-        modified += 1
-        register **expected unless dry
+        planned << [:register, [], expected]
       end
     end
 
     # all definitions that are left did not match any expected definitions and are no longer needed
     actual_definitions.each do |actual|
       @logger.info "Removing #{actual.fetch(:service)} / #{actual.fetch(:service_id)} on #{actual.fetch(:node)} in Consul"
-      modified += 1
-      deregister actual.fetch(:node), actual.fetch(:service_id) unless dry
+      planned << [:deregister, [actual.fetch(:node), actual.fetch(:service_id)], nil]
     end
 
-    modified
+    planned
+  end
+
+  def execute(planned)
+    planned.each do |m, args, kwargs|
+      if kwargs
+        send m, *args, **kwargs
+      else
+        send m, *args
+      end
+    end
   end
 
   private
