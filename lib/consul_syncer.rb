@@ -64,31 +64,23 @@ class ConsulSyncer
       elsif remove_matching_service!(actual_definitions, expected, interesting)
         @logger.debug "Found #{description}"
       elsif remove_matching_service!(actual_definitions, expected, identifying)
-        @logger.info "Updating #{description}"
-        planned << [:register, [], expected]
+        planned << [:register, [], expected.merge(reason: "Updating #{description}")]
       else
-        @logger.info "Adding #{description}"
-        planned << [:register, [], expected]
+        planned << [:register, [], expected.merge(reason: "Adding #{description}")]
       end
     end
 
     # all definitions that are left did not match any expected definitions and are no longer needed
     actual_definitions.each do |actual|
-      @logger.info "Removing #{actual.fetch(:service)} / #{actual.fetch(:service_id)} on #{actual.fetch(:node)} in Consul"
-      planned << [:deregister, [actual.fetch(:node), actual.fetch(:service_id)], nil]
+      reason = "Removing #{actual.fetch(:service)} / #{actual.fetch(:service_id)} on #{actual.fetch(:node)} in Consul"
+      planned << [:deregister, [actual.fetch(:node), actual.fetch(:service_id)], {reason: reason}]
     end
 
     planned
   end
 
   def execute(planned)
-    planned.each do |m, args, kwargs|
-      if kwargs
-        send m, *args, **kwargs
-      else
-        send m, *args
-      end
-    end
+    planned.each { |m, args, kwargs| send m, *args, **kwargs }
   end
 
   private
@@ -116,7 +108,8 @@ class ConsulSyncer
   end
 
   # creates or updates based on node and service
-  def register(node:, service:, service_id:, service_address:, address:, tags:, port:)
+  def register(node:, service:, service_id:, service_address:, address:, tags:, port:, reason:)
+    @logger.info reason
     @consul.request(
       :put,
       '/v1/catalog/register',
@@ -132,7 +125,8 @@ class ConsulSyncer
     )
   end
 
-  def deregister(node, service_id)
+  def deregister(node, service_id, reason:)
+    @logger.info reason
     @consul.request(
       :put,
       '/v1/catalog/deregister',
