@@ -25,7 +25,7 @@ describe ConsulSyncer do
   end
 
   it "does nothing when everything is empty" do
-    stub_request(:get, "http://localhost:123/v1/catalog/services?cached&stale&tag=foo").
+    stub_request(:get, "http://localhost:123/v1/catalog/services?cached&stale").
       to_return(body: "[]")
     syncer.sync([], ['foo', 'bar'])
   end
@@ -48,7 +48,7 @@ describe ConsulSyncer do
     end
 
     before do
-      stub_request(:get, "http://localhost:123/v1/catalog/services?cached&stale&tag=bar").
+      stub_request(:get, "http://localhost:123/v1/catalog/services?cached&stale").
         to_return(body: {foo: tags}.to_json)
       stub_request(:get, "http://localhost:123/v1/health/service/foo").
         to_return(body: [node].to_json)
@@ -135,7 +135,7 @@ describe ConsulSyncer do
     let(:syncer) { ConsulSyncer.new("http://localhost:123", logger: Logger.new("/dev/null"), params: {from_host: 'xyz', foo: 'bar'}) }
 
     it "sends params during requests" do
-      stub_request(:get, "http://localhost:123/v1/catalog/services?cached&stale&foo=bar&from_host=xyz&tag=some-tag").to_return(body: "[]")
+      stub_request(:get, "http://localhost:123/v1/catalog/services?cached&stale&foo=bar&from_host=xyz").to_return(body: "[]")
       stub_request(:put, "http://localhost:123/v1/catalog/register?foo=bar&from_host=xyz")
       syncer.sync [definition], ["some-tag"]
     end
