@@ -10,9 +10,10 @@ require 'consul_syncer/wrapper'
 # - updates changed
 # - removes deprecated
 class ConsulSyncer
-  def initialize(url, logger: Logger.new(STDOUT), params: {})
+  def initialize(url, logger: Logger.new(STDOUT), params: {}, services_params: nil)
     @logger = logger
     @consul = Wrapper.new(url, params: params, logger: @logger)
+    @services_params = services_params
   end
 
   # changing tags means all previous services need to be removed manually since
@@ -84,7 +85,9 @@ class ConsulSyncer
   private
 
   def consul_endpoints(requested_tags)
-    services = @consul.request(:get, "/v1/catalog/services?cached&stale")
+    path = "/v1/catalog/services"
+    path += "?#{@services_params}" if @services_params
+    services = @consul.request(:get, path)
     services.each_with_object([]) do |(name, tags), all|
       # cannot query for multiple tags via query, so handle multi-matching manually
       next if (requested_tags - tags).any?
