@@ -124,4 +124,13 @@ describe ConsulSyncer do
       syncer.sync [definition], ["some-tag"]
     end
   end
+
+  describe "with services_params" do
+    let(:syncer) { ConsulSyncer.new("http://localhost:123", logger: Logger.new("/dev/null"), services_params: "stale&cached") }
+
+    it "adds services_params to catalog services request" do
+      stub_request(:get, "http://localhost:123/v1/catalog/services?stale&cached").to_return(body: "{}")
+      syncer.sync [], ["some-tag"]
+    end
+  end
 end

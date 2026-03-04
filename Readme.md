@@ -38,6 +38,12 @@ They will get logged in consuls log `consul monitor --log-level=debug` and will 
 ConsulSyncer.new('http://localhost:8500', logger: Logger.new(STDOUT), params: {host: Socket.gethostname, app: 'consul-filler'})
 ```
 
+To add query parameters to the catalog services endpoint (e.g., for stale reads), use `services_params`.
+
+```Ruby
+ConsulSyncer.new('http://localhost:8500', logger: Logger.new(STDOUT), services_params: 'stale&cached')
+```
+
 Spliting planning and execution to for example add confirmation or inspect the changes.
 
 ```ruby
