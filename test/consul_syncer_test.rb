@@ -26,7 +26,7 @@ describe ConsulSyncer do
 
   it "does nothing when everything is empty" do
     stub_request(:get, "http://localhost:123/v1/catalog/services?cached&stale").
-      to_return(body: "[]")
+      to_return(body: "{}")
     syncer.sync([], ['foo', 'bar'])
   end
 
