@@ -17,10 +17,8 @@ class ConsulSyncer
 
   # changing tags means all previous services need to be removed manually since
   # they can no longer be found
-  def sync(expected_definitions, tags, dry: false)
-    planned = plan(expected_definitions, tags)
-    execute planned unless dry
-    planned.size # let users know what we did and keep legacy api working
+  def sync(expected_definitions, tags)
+    execute plan(expected_definitions, tags)
   end
 
   def plan(expected_definitions, tags)
