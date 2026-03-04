@@ -9,7 +9,6 @@ GEM
   specs:
     addressable (2.8.9)
       public_suffix (>= 2.0.2, < 8.0)
-    base64 (0.3.0)
     bigdecimal (4.0.1)
     bump (0.10.0)
     crack (1.0.1)
@@ -41,28 +40,26 @@ GEM
     ruby2_keywords (0.0.5)
     single_cov (2.0.0)
     uri (1.1.1)
-    webmock (3.3.0)
-      addressable (>= 2.3.6)
+    webmock (3.26.1)
+      addressable (>= 2.8.0)
       crack (>= 0.3.2)
-      hashdiff
+      hashdiff (>= 0.4.0, < 2.0.0)
 
 PLATFORMS
   arm64-darwin-25
   ruby
 
 DEPENDENCIES
-  base64
   bump
   consul_syncer!
   maxitest
   mocha
   rake
   single_cov
-  webmock (~> 3.3.0)
+  webmock
 
 CHECKSUMS
   addressable (2.8.9) sha256=cc154fcbe689711808a43601dee7b980238ce54368d23e127421753e46895485
-  base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
   bigdecimal (4.0.1) sha256=8b07d3d065a9f921c80ceaea7c9d4ae596697295b584c296fe599dd0ad01c4a7
   bump (0.10.0) sha256=07929cf79031d2863f55e7b111e164566be10c43f8c42d67db7cb3b5745f0975
   consul_syncer (1.2.2)
@@ -84,7 +81,7 @@ CHECKSUMS
   ruby2_keywords (0.0.5) sha256=ffd13740c573b7301cf7a2e61fc857b2a8e3d3aff32545d6f8300d8bae10e3ef
   single_cov (2.0.0) sha256=eeda6a5b9239dfe90ec919c6009c96624a1452333c8002bf474cbebc7ca008ff
   uri (1.1.1) sha256=379fa58d27ffb1387eaada68c749d1426738bd0f654d812fcc07e7568f5c57c6
-  webmock (3.3.0) sha256=07f4e289cc3881e2a2c1529bad464bf4c493d720fec34a364a2133aef6ca5973
+  webmock (3.26.1) sha256=4f696fb57c90a827c20aadb2d4f9058bbff10f7f043bd0d4c3f58791143b1cd7
 
 BUNDLED WITH
   4.0.7
