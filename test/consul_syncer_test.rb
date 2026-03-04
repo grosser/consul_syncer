@@ -56,6 +56,7 @@ describe ConsulSyncer do
 
     it "does nothing when in sync" do
       syncer.sync [definition], tags.first(1)
+      definition[:tags].must_equal ["baz"]
     end
 
     it "does not modify services that are marked as keep when they are found" do

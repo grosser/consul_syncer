@@ -27,7 +27,7 @@ class ConsulSyncer
     raise ArgumentError, "Need at least 1 tag to reliably update endpoints" if tags.empty?
 
     # ensure consistent tags to find the endpoints after adding
-    expected_definitions = expected_definitions.dup
+    expected_definitions = expected_definitions.map(&:dup)
     expected_definitions.each do |d|
       d[:tags] += tags
       d[:tags].sort!
