@@ -17,17 +17,15 @@ class ConsulSyncer
 
   # changing tags means all previous services need to be removed manually since
   # they can no longer be found
-  def sync(expected_definitions, tags, dry: false)
-    planned = plan(expected_definitions, tags)
-    execute planned unless dry
-    planned.size # let users know what we did and keep legacy api working
+  def sync(expected_definitions, tags)
+    execute plan(expected_definitions, tags)
   end
 
   def plan(expected_definitions, tags)
     raise ArgumentError, "Need at least 1 tag to reliably update endpoints" if tags.empty?
 
     # ensure consistent tags to find the endpoints after adding
-    expected_definitions = expected_definitions.dup
+    expected_definitions = expected_definitions.map(&:dup)
     expected_definitions.each do |d|
       d[:tags] += tags
       d[:tags].sort!

@@ -26,7 +26,7 @@ describe ConsulSyncer do
 
   it "does nothing when everything is empty" do
     stub_request(:get, "http://localhost:123/v1/catalog/services?cached&stale").
-      to_return(body: "[]")
+      to_return(body: "{}")
     syncer.sync([], ['foo', 'bar'])
   end
 
@@ -56,6 +56,7 @@ describe ConsulSyncer do
 
     it "does nothing when in sync" do
       syncer.sync [definition], tags.first(1)
+      definition[:tags].must_equal ["baz"]
     end
 
     it "does not modify services that are marked as keep when they are found" do
@@ -80,7 +81,7 @@ describe ConsulSyncer do
 
     it "adds a missing service" do
       stub_request(:put, "http://localhost:123/v1/catalog/register").
-        with(body: {"{\"Node\":\"foo.test.com\",\"Address\":\"1.2.3.4\",\"Service\":{\"ID\":\"fooid\",\"Service\":\"foo\",\"Address\":\"10.0.2.2\",\"Tags\":\"bar\",\"baz\",\"Port\":5080}}"=>nil})
+        with(body: {Node: "foo.test.com", Address: "1.2.3.4", Service: {ID: "fooid", Service: "foo", Address: "10.0.2.2", Tags: ["bar", "baz"], Port: 5080}})
 
       other = definition.dup
       other[:address] = '1.2.3.4'
@@ -89,7 +90,7 @@ describe ConsulSyncer do
 
     it "removes extra service" do
       stub_request(:put, "http://localhost:123/v1/catalog/deregister").
-        with(body: {"{\"Node\":\"foo.test.com\",\"ServiceID\":\"fooid\"}"=>nil})
+        with(body: {Node: "foo.test.com", ServiceID: "fooid"})
       syncer.sync [], tags.first(1)
     end
 
@@ -108,26 +109,9 @@ describe ConsulSyncer do
 
     it "updates modified service" do
       stub_request(:put, "http://localhost:123/v1/catalog/register").
-        with(body: {"{\"Node\":\"foo.test.com\",\"Address\":\"10.0.1.1\",\"Service\":{\"ID\":\"fooid\",\"Service\":\"foo\",\"Address\":\"10.0.2.2\",\"Tags\":\"bar\",\"baz\",\"Port\":5081}}"=>nil})
+        with(body: {Node: "foo.test.com", Address: "10.0.1.1", Service: {ID: "fooid", Service: "foo", Address: "10.0.2.2", Tags: ["bar", "baz"], Port: 5081}})
       definition[:port] += 1
       syncer.sync [definition], tags.first(1)
-    end
-
-    describe "dry" do
-      it "does not remove" do
-        other = definition.dup
-        other[:address] = '1.2.3.4'
-        syncer.sync [definition, other], tags.first(1), dry: true
-      end
-
-      it "does not add" do
-        syncer.sync [], tags.first(1), dry: true
-      end
-
-      it "does not update" do
-        definition[:port] += 1
-        syncer.sync [definition], tags.first(1), dry: true
-      end
     end
   end
 

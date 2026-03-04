@@ -13,7 +13,9 @@ class ConsulSyncer
 
     def initialize(consul_url, params:, logger:)
       consul_url = "http://#{consul_url}" unless consul_url.include?("://")
-      @consul = Faraday.new(consul_url)
+      @consul = Faraday.new(consul_url) do |f|
+        f.request :json
+      end
       @params = params
       @logger = logger
     end
@@ -24,7 +26,7 @@ class ConsulSyncer
         path += "#{separator}#{URI.encode_www_form(@params)}"
       end
       args = [path]
-      args << payload.to_json if payload
+      args << payload if payload
 
       retry_on_error do
         response = @consul.send(method, *args)
